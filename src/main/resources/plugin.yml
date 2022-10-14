@@ -1,0 +1,7 @@
+name: Item-API
+version: '${project.version}'
+main: me.ikevoodoo.itemapi.ItemApi
+api-version: 1.17
+load: STARTUP
+authors: [ IkeVoodoo ]
+description: Items, but less pain
