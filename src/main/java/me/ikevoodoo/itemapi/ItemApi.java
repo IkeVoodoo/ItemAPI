@@ -10,7 +10,7 @@ public final class ItemApi extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        ItemBuilder.create(Material.DIAMOND_SWORD)
+        new ItemBuilder(Material.DIAMOND_SWORD)
             .count(1)
             .enchant(Enchantments.SHARPNESS, 5)
             .named("§cOrphan Obliterator")
