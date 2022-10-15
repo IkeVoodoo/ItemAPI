@@ -69,8 +69,15 @@ public final class LoreBuilder {
         return this;
     }
 
+    /**
+     * Takes the added text and returns it.
+     *
+     * @return An immutable snapshot of the LoreBuilder.
+     * @see ArrayList
+     * @since 1.0
+     * */
     public List<String> build() {
-        return new ArrayList<>(this.components);
+        return Collections.unmodifiableList(this.components);
     }
 
 }
