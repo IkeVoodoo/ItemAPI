@@ -7,7 +7,8 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.UUID;
 
-public class SkullMetaWrapper extends MetaWrapper<SkullMeta> {
+@SuppressWarnings("unused")
+public final class SkullMetaWrapper extends MetaWrapper<SkullMeta> {
     public SkullMetaWrapper(SkullMeta meta) {
         super(meta);
     }

@@ -1,5 +1,6 @@
 package me.ikevoodoo.itemapi;
 
+import me.ikevoodoo.itemapi.enchantments.Enchantments;
 import me.ikevoodoo.itemapi.lore.LoreBuilder;
 import me.ikevoodoo.itemapi.meta.MetaWrapper;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -17,6 +18,7 @@ import org.bukkit.plugin.Plugin;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+@SuppressWarnings("unused")
 public final class ItemBuilder {
 
     private final ItemStack base;
@@ -53,6 +55,46 @@ public final class ItemBuilder {
     }
 
     /**
+     * This method is the quick way to make items glow.<br>
+     * <pre>
+     * If "shouldGlow" is true then it:
+     *   Adds the flag HIDE_ENCHANTS
+     *   Enchants the item with INFINITY.
+     *   Bows however get enchanted with FROST_WALKER.
+     *
+     * If "shouldGlow" is false then it:
+     *   Removes the flag HIDE_ENCHANTS
+     *   Removes INFINITY from the item.
+     *   Bows however get FROST_WALKER removed.
+     * </pre>
+     *
+     * @param shouldGlow Should the item glow?
+     * @since 1.0
+     * */
+    public ItemBuilder glow(boolean shouldGlow) {
+        if (shouldGlow) {
+            this.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        } else {
+            this.removeItemFlags(ItemFlag.HIDE_ENCHANTS);
+        }
+
+        Material material = this.base.getType();
+        if (material == Material.BOW) {
+            if (shouldGlow) {
+                return this.enchant(Enchantments.FROST_WALKER, 0);
+            }
+
+            return this.removeEnchant(Enchantments.FROST_WALKER);
+        }
+
+        if (shouldGlow) {
+            return this.enchant(Enchantments.INFINITY, 0);
+        }
+
+        return this.removeEnchant(Enchantments.INFINITY);
+    }
+
+    /**
      * Edit the count of the ItemStack.
      *
      * @param count An integer within the range 1 to 64.
@@ -76,6 +118,19 @@ public final class ItemBuilder {
      * */
     public ItemBuilder enchant(Enchantment enchantment, int level) {
         this.meta.addEnchant(enchantment, Math.max(1, Math.min(255, level)), true);
+        return this;
+    }
+
+    /**
+     * Remove an enchantment from the ItemStack.
+     *
+     * @param enchantment The enchantment to remove.
+     *                    If this is null an {@link IllegalArgumentException} will be thrown.
+     * @see Enchantment
+     * @since 1.0
+     * */
+    public ItemBuilder removeEnchant(Enchantment enchantment) {
+        this.meta.removeEnchant(enchantment);
         return this;
     }
 
@@ -221,6 +276,36 @@ public final class ItemBuilder {
      * */
     public <T, Z> ItemBuilder addKey(Plugin plugin, String key, PersistentDataType<T, Z> type, Z value) {
         return this.addKey(new NamespacedKey(plugin, key), type, value);
+    }
+
+    /**
+     * Adds the key as a "marker key".<br>
+     * A marker key is a key without data.<br>
+     * In this case the value it is given is 0, as a value is always required.<br>
+     *
+     * Adding is done via {@link ItemBuilder#addKey(NamespacedKey, PersistentDataType, Object)}
+     *
+     * @param key The key to set
+     * @see NamespacedKey
+     * @since 1.0
+     * */
+    public ItemBuilder addMarkerKey(NamespacedKey key) {
+        return this.addKey(key, PersistentDataType.BYTE, (byte) 0);
+    }
+
+    /**
+     * Creates and adds the key as a "marker key".<br>
+     * A marker key is a key without data.<br>
+     * In this case the value it is given is 0, as a value is always required.<br>
+     *
+     * Adding is done via {@link ItemBuilder#addMarkerKey(NamespacedKey)}
+     *
+     * @param key The key to set
+     * @see NamespacedKey
+     * @since 1.0
+     * */
+    public ItemBuilder addMarkerKey(Plugin plugin, String key) {
+        return this.addMarkerKey(new NamespacedKey(plugin, key));
     }
 
     /**
